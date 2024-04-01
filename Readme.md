@@ -13,13 +13,11 @@ source mistralpizza/bin/activate
 pip install -r requirements.txt
 ```
 
-- Create a folder called model
-```
-mkdir folder_name
-```
+```python main.py```
+
+Additional Section:
+
 - Download the model from huggingface
 ```
-wget https://huggingface.co/TheBloke/Llama-2-7B-GGUF/resolve/main/llama-2-7b.Q8_0.gguf?download=true
+wget https://huggingface.co/sachin19566/mistral-pizza/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf?download=true
 ```
-
-```chainlit run main.py -w```
