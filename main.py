@@ -10,7 +10,7 @@ from llama_index.core.memory import ChatMemoryBuffer
 # Initialize Flask application
 app = Flask(__name__)
 
-path= "/Users/sachinmishra/Desktop/VoiceMLPizza/mistral-pizza/Readme.md"
+path= "/Users/sachinmishra/Desktop/VoiceMLPizza/mistral-pizza/pizza_knowledge_base.pdf"
 index= get_index(path)
 
 # Initialize ChatMemoryBuffer
