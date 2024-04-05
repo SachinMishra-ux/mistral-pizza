@@ -1,17 +1,13 @@
 from ingestion import get_index
 from flask import Flask, request, jsonify
 from llama_index.core.memory import ChatMemoryBuffer
-
-
-
-
-
+import uvicorn
 
 # Initialize Flask application
 app = Flask(__name__)
 
-path= "/Users/sachinmishra/Desktop/VoiceMLPizza/mistral-pizza/pizza_knowledge_base.pdf"
-index= get_index(path)
+path = "/Users/sachinmishra/Desktop/VoiceMLPizza/mistral-pizza/pizza_knowledge_base.pdf"
+index = get_index(path)
 
 # Initialize ChatMemoryBuffer
 memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
@@ -30,9 +26,8 @@ def chat():
         chat_mode="context",
         memory=memory,
         system_prompt=("""You are a helpful pizza-bot. Follow this flow for taking the orders from customers.
-        First greet the customer. Then ask for orders of pizza from customers & try to customize their order if they ask for customization & finally confirm thier order."""
-        "Hi"
-        ),
+        First greet the customer. Then ask for orders of pizza from customers & try to customize their order if they ask for customization & finally confirm their order."""
+                      ),
     )
 
     # Generate response using chat engine
@@ -41,6 +36,6 @@ def chat():
     # Return response as JSON
     return jsonify({'response': response})
 
-# Run the Flask application
 if __name__ == '__main__':
-    app.run(debug=True)
+    
+    uvicorn.run(app, host="0.0.0.0", port=5000, debug=True)
