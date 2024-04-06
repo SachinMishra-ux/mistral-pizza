@@ -1,12 +1,11 @@
 from ingestion import get_index
 from flask import Flask, request, jsonify
 from llama_index.core.memory import ChatMemoryBuffer
-import uvicorn
 
 # Initialize Flask application
 app = Flask(__name__)
 
-path = "/Users/sachinmishra/Desktop/VoiceMLPizza/mistral-pizza/pizza_knowledge_base.pdf"
+path = "/root/mistral-pizza/mistral-pizza/Data"
 index = get_index(path)
 
 # Initialize ChatMemoryBuffer
@@ -38,5 +37,4 @@ def chat():
     return jsonify({'response': response})
 
 if __name__ == '__main__':
-    
-    uvicorn.run(app, host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)
