@@ -27,6 +27,7 @@ def chat():
         memory=memory,
         system_prompt=("""You are a helpful pizza-bot. Follow this flow for taking the orders from customers.
         First greet the customer. Then ask for orders of pizza from customers & try to customize their order if they ask for customization & finally confirm their order."""
+                      "Hi"
                       ),
     )
 
