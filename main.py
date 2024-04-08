@@ -10,12 +10,11 @@ from llama_index.llms.llama_cpp.llama_utils import (
 from langchain.embeddings import HuggingFaceEmbeddings
 from llama_index.embeddings.langchain import LangchainEmbedding
 from flask import Flask, request, jsonify
-from quart import Quart, request, jsonify
 from llama_index.core.memory import ChatMemoryBuffer
 
 ## create embeddings
 
-documents = SimpleDirectoryReader('/Users/sachinmishra/Desktop/VoiceMLPizza/mistral-pizza/Data').load_data()
+documents = SimpleDirectoryReader('/root/mistral-pizza/mistral-pizza/Data').load_data()
 
 llm = LlamaCPP(
     # You can pass in the URL to a GGML model to download it automatically
@@ -50,37 +49,35 @@ service_context = ServiceContext.from_defaults(
 
 index = VectorStoreIndex.from_documents(documents, service_context=service_context)
 
-# Initialize Flask application
-app = Quart(__name__)
-
 # Initialize ChatMemoryBuffer
 memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
+  # Initialize chat engine with provided system prompt and memory
+chat_engine = index.as_chat_engine(
+         chat_mode="context",
+         memory=memory,
+         system_prompt=("""You are a helpful pizza-bot. Follow this flow for taking the orders from customers.
+         First greet the customer. Then ask for orders of pizza from customers & try to customize their order if they ask for customization & finally confirm their order."""
+                 ),
+         )
+# Initialize Flask application
+app = Flask(__name__)
+
 
 # Define route to handle POST requests
 @app.route('/chat', methods=['POST'])
 def chat():
-    # Retrieve JSON data from the POST request
-    data = request.json
+    if request.is_json:
+        # Retrieve JSON data from the POST request
+        data = request.get_json()
+        # Generate response using chat engine
+        response = chat_engine.chat(data['user_message'])
 
-    # Extract necessary information from the JSON data
-    user_message = data.get('user_message', "")
-
-    # Initialize chat engine with provided system prompt and memory
-    chat_engine = index.as_chat_engine(
-        chat_mode="context",
-        memory=memory,
-        system_prompt=("""You are a helpful pizza-bot. Follow this flow for taking the orders from customers.
-        First greet the customer. Then ask for orders of pizza from customers & try to customize their order if they ask for customization & finally confirm their order."""
-                      "Hi"
-                      ),
-    )
-
-    # Generate response using chat engine
-    response = chat_engine.chat(user_message)
-    print(response)
-
-    # Return response as JSON
-    return jsonify({'response': response})
+        # Return response as JSON
+        return jsonify({'response': response})
+    else:
+        # If the request does not contain JSON data, return an error
+        error_response = {"error": "Request must contain JSON data"}
+        return jsonify(error_response), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
